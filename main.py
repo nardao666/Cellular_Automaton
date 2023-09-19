@@ -87,7 +87,6 @@ def cellular_automaton(rules:list, one_seed:bool,base_path:str):
         axes.matshow(grid, cmap= ListedColormap(['w','b']))
         plt.yticks([])
         plt.xticks([])
-        # plt.show()
         plt.draw()
         fig1.savefig(os.path.join(base_path,str(tempo)+".png"),dp1= 300)
         plt.close() 
