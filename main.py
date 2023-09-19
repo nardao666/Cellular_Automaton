@@ -33,13 +33,14 @@ def decimal_to_binary(rule:int)->list:
         rule = int(rule)/2
     return binary_number
 
-def cellular_automaton(rules:list, one_seed:bool):
+def cellular_automaton(rules:list, one_seed:bool,base_path:str):
     """
     Evolução no tempo e aplicação das regras 
 
     Args:
         rules (list): valor da regra a ser aplicada na base 2
-        one_seed (bool): se vai ter uma ou varias sementes
+        one_seed (bool): Ter uma ou varias sementes
+        base_path (str): Caminho da pasta onde serão salvas as imagens
     """
     grid = [[0]*500]*500
     preview = [0]*500
@@ -56,22 +57,27 @@ def cellular_automaton(rules:list, one_seed:bool):
         else:   
             preview[0] = forward[0]
             preview[-1] = forward[-1]         
-            for pixel in range(1,499):                
-                if preview[pixel-1] == 0 and preview[pixel] == 0 and preview[pixel+1] == 0:
+            for pixel in range(0,500):  
+                if pixel+1 >= len(preview):
+                    pos = 0
+                else:
+                    pos = pixel + 1
+                                                      
+                if preview[pixel-1] == 0 and preview[pixel] == 0 and preview[pos] == 0:
                     forward[pixel] = (rules[0])#000
-                elif preview[pixel-1] == 0 and preview[pixel] == 0 and preview[pixel+1] == 1:
+                elif preview[pixel-1] == 0 and preview[pixel] == 0 and preview[pos] == 1:
                     forward[pixel] = (rules[1])#001
-                elif preview[pixel-1] == 0 and preview[pixel] == 1 and preview[pixel+1] == 0:
+                elif preview[pixel-1] == 0 and preview[pixel] == 1 and preview[pos] == 0:
                     forward[pixel] = (rules[2])#010
-                elif preview[pixel-1] == 0 and preview[pixel] == 1 and preview[pixel+1] == 1:
+                elif preview[pixel-1] == 0 and preview[pixel] == 1 and preview[pos] == 1:
                     forward[pixel] = (rules[3])#011
-                elif preview[pixel-1] == 1 and preview[pixel] == 0 and preview[pixel+1] == 0:
+                elif preview[pixel-1] == 1 and preview[pixel] == 0 and preview[pos] == 0:
                     forward[pixel] = (rules[4])#100
-                elif preview[pixel-1] == 1 and preview[pixel] == 0 and preview[pixel+1] == 1:
+                elif preview[pixel-1] == 1 and preview[pixel] == 0 and preview[pos] == 1:
                     forward[pixel] = (rules[5])#101
-                elif preview[pixel-1] == 1 and preview[pixel] == 1 and preview[pixel+1] == 0:
+                elif preview[pixel-1] == 1 and preview[pixel] == 1 and preview[pos] == 0:
                     forward[pixel] = (rules[6])#110
-                elif preview[pixel-1] == 1 and preview[pixel] == 1 and preview[pixel+1] == 1:
+                elif preview[pixel-1] == 1 and preview[pixel] == 1 and preview[pos] == 1:
                     forward[pixel] = (rules[7])#111
             preview = deepcopy(forward)
         grid[tempo] = deepcopy(preview)
@@ -81,9 +87,10 @@ def cellular_automaton(rules:list, one_seed:bool):
         axes.matshow(grid, cmap= ListedColormap(['w','b']))
         plt.yticks([])
         plt.xticks([])
-        plt.show()
+        # plt.show()
         plt.draw()
-        fig1.savefig(os.path.join('graficos',str(tempo)+".png"),dp1= 300)
+        fig1.savefig(os.path.join(base_path,str(tempo)+".png"),dp1= 300)
+        plt.close() 
 
 
 def rename_image(base_path:str):
@@ -134,7 +141,7 @@ def remove_png(base_path:str):
 
 rules = show_prompt()
 binary_rules = decimal_to_binary(rules)
-cellular_automaton(binary_rules, True)
+cellular_automaton(binary_rules, True,r'graficos')
 rename_image(r'graficos')
 create_gif(r'graficos',rules)
 remove_png(r'graficos')
